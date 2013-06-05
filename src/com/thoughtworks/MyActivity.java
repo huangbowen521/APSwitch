@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -41,9 +40,27 @@ public class MyActivity extends Activity {
 
         WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-        Method method2 = wifi.getClass().getMethod("getWifiApState");
-        int state = (Integer) method2.invoke(wifi);
+        Boolean state = getApState(wifi);
 
+        WifiConfiguration apConfig = getApConfiguration();
+
+        Method method = wifi.getClass().getMethod(
+                "setWifiApEnabled", WifiConfiguration.class, Boolean.TYPE);
+
+        boolean enabled = !state;
+
+        if (enabled) {
+            wifi.setWifiEnabled(!enabled);
+            method.invoke(wifi, apConfig, enabled);
+        } else {
+            method.invoke(wifi, apConfig, enabled);
+            wifi.setWifiEnabled(!enabled);
+        }
+
+
+    }
+
+    private WifiConfiguration getApConfiguration() {
         WifiConfiguration apConfig = new WifiConfiguration();
         //配置热点的名称
         apConfig.SSID = "bowen";
@@ -52,16 +69,13 @@ public class MyActivity extends Activity {
         apConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
         apConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
         //配置热点的密码
-        apConfig.preSharedKey="huangbowen";
+        apConfig.preSharedKey = "huangbowen";
+        return apConfig;
+    }
 
-        //通过反射调用设置热点
-        Method method = wifi.getClass().getMethod(
-                "setWifiApEnabled", WifiConfiguration.class, Boolean.TYPE);
-        //返回热点打开状态
-
-        boolean enabled = state == 13 ? false : true;
-
-        method.invoke(wifi, apConfig, enabled);
+    private Boolean getApState(WifiManager wifi) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method method2 = wifi.getClass().getMethod("isWifiApEnabled");
+        return (Boolean) method2.invoke(wifi);
     }
 
 }
