@@ -63,19 +63,19 @@ public class MyActivity extends Activity {
     private WifiConfiguration getApConfiguration() {
         WifiConfiguration apConfig = new WifiConfiguration();
         //配置热点的名称
-        apConfig.SSID = "bowen";
+        apConfig.SSID = "yourId";
         apConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
         apConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         apConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
         apConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
         //配置热点的密码
-        apConfig.preSharedKey = "huangbowen";
+        apConfig.preSharedKey = "yourPassword";
         return apConfig;
     }
 
     private Boolean getApState(WifiManager wifi) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Method method2 = wifi.getClass().getMethod("isWifiApEnabled");
-        return (Boolean) method2.invoke(wifi);
+        Method method = wifi.getClass().getMethod("isWifiApEnabled");
+        return (Boolean) method.invoke(wifi);
     }
 
 }
